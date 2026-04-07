@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Mercari Transaction Opener</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      width: 100%;
+      max-width: 560px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea:focus {
+      border-color: #ff6b6b;
+    }
+    button {
+      margin-top: 14px;
+      width: 100%;
+      padding: 14px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #e85555;
+    }
+    #result {
+      margin-top: 16px;
+      font-size: 13px;
+      color: #555;
+      min-height: 20px;
+    }
+    #result.error { color: #e53935; }
+    #result.success { color: #43a047; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mercari Transaction Opener</h1>
+    <p>상품 ID를 빈칸으로 구분하여 입력하면 각 거래 페이지를 새 탭으로 엽니다.</p>
+    <textarea id="ids" placeholder="예: m24285068189 m53716215627 m53606061438"></textarea>
+    <button onclick="openTabs()">열기</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function openTabs() {
+      const input = document.getElementById('ids').value.trim();
+      const result = document.getElementById('result');
+
+      if (!input) {
+        result.className = 'error';
+        result.textContent = '상품 ID를 입력해주세요.';
+        return;
+      }
+
+      const ids = input.split(/\s+/).filter(Boolean);
+      const base = 'https://jp.mercari.com/transaction/';
+
+      ids.forEach(id => {
+        window.open(base + id, '_blank');
+      });
+
+      result.className = 'success';
+      result.textContent = `${ids.length}개의 탭을 열었습니다: ${ids.join(', ')}`;
+    }
+
+    document.getElementById('ids').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && e.ctrlKey) openTabs();
+    });
+  </script>
+</body>
+</html>
