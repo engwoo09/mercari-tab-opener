@@ -98,6 +98,8 @@
         window.open(base + id, '_blank');
       });
 
+      document.getElementById('ids').value = '';
+
       result.className = 'success';
       result.textContent = `${ids.length}개의 탭을 열었습니다: ${ids.join(', ')}`;
     }
