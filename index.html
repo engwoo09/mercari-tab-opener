@@ -126,7 +126,7 @@
         : 'https://jp.mercari.com/item/';
 
       ids.forEach(function(id) {
-        window.open(base + id, '_blank');
+        window.open(base + id, 'mercari_' + id);
       });
 
       document.getElementById('ids').value = '';
