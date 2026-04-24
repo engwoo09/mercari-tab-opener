@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Mercari Transaction Opener</title>
+  <title>Mercari Opener</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -22,16 +22,32 @@
       max-width: 560px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    h1 {
-      font-size: 20px;
-      color: #333;
-      margin-bottom: 8px;
+    h1 { font-size: 20px; color: #333; margin-bottom: 8px; }
+    p { font-size: 13px; color: #888; margin-bottom: 16px; }
+
+    .mode-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
     }
-    p {
+    .mode-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
       font-size: 13px;
-      color: #888;
-      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #555;
     }
+    .mode-btn.active {
+      border-color: #ff6b6b;
+      background: #fff0f0;
+      color: #ff6b6b;
+      font-weight: bold;
+    }
+
     textarea {
       width: 100%;
       height: 100px;
@@ -43,10 +59,9 @@
       outline: none;
       transition: border-color 0.2s;
     }
-    textarea:focus {
-      border-color: #ff6b6b;
-    }
-    button {
+    textarea:focus { border-color: #ff6b6b; }
+
+    button.open-btn {
       margin-top: 14px;
       width: 100%;
       padding: 14px;
@@ -58,14 +73,14 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-    button:hover {
-      background: #e85555;
-    }
+    button.open-btn:hover { background: #e85555; }
+
     #result {
       margin-top: 16px;
       font-size: 13px;
       color: #555;
       min-height: 20px;
+      word-break: break-all;
     }
     #result.error { color: #e53935; }
     #result.success { color: #43a047; }
@@ -73,17 +88,31 @@
 </head>
 <body>
   <div class="container">
-    <h1>Mercari Transaction Opener</h1>
-    <p>상품 ID를 빈칸으로 구분하여 입력하면 각 거래 페이지를 새 탭으로 엽니다.</p>
+    <h1>Mercari Opener</h1>
+    <p>상품 ID를 빈칸으로 구분하여 입력하면 새 탭으로 엽니다.</p>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-transaction" onclick="setMode('transaction')">거래화면</button>
+      <button class="mode-btn" id="btn-item" onclick="setMode('item')">상품페이지</button>
+    </div>
+
     <textarea id="ids" placeholder="예: m24285068189 m53716215627 m53606061438"></textarea>
-    <button onclick="openTabs()">열기</button>
+    <button class="open-btn" onclick="openTabs()">열기</button>
     <div id="result"></div>
   </div>
 
   <script>
+    var currentMode = 'transaction';
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('btn-transaction').classList.toggle('active', mode === 'transaction');
+      document.getElementById('btn-item').classList.toggle('active', mode === 'item');
+    }
+
     function openTabs() {
-      const input = document.getElementById('ids').value.trim();
-      const result = document.getElementById('result');
+      var input = document.getElementById('ids').value.trim();
+      var result = document.getElementById('result');
 
       if (!input) {
         result.className = 'error';
@@ -91,18 +120,31 @@
         return;
       }
 
-      const ids = input.split(/\s+/).filter(Boolean);
-      const base = 'https://jp.mercari.com/transaction/';
+      var ids = input.split(/\s+/).filter(Boolean);
+      var base = currentMode === 'transaction'
+        ? 'https://jp.mercari.com/transaction/'
+        : 'https://jp.mercari.com/item/';
 
-      ids.forEach(id => {
+      ids.forEach(function(id) {
         window.open(base + id, '_blank');
       });
 
       document.getElementById('ids').value = '';
 
       result.className = 'success';
-      result.textContent = `${ids.length}개의 탭을 열었습니다: ${ids.join(', ')}`;
+      result.textContent = ids.length + '개의 탭을 열었습니다 (' + (currentMode === 'transaction' ? '거래화면' : '상품페이지') + ')';
     }
+
+    // URL 파라미터로 ids 자동 입력
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var ids = params.get('ids');
+      var mode = params.get('mode');
+      if (mode === 'item' || mode === 'transaction') setMode(mode);
+      if (ids) {
+        document.getElementById('ids').value = ids.trim();
+      }
+    })();
 
     document.getElementById('ids').addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && e.ctrlKey) openTabs();
