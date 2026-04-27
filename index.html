@@ -84,6 +84,20 @@
     }
     #result.error { color: #e53935; }
     #result.success { color: #43a047; }
+    #result .link-list { margin-top: 8px; }
+    #result .link-list a {
+      display: block;
+      color: #1a73e8;
+      font-size: 12px;
+      margin: 3px 0;
+      text-decoration: none;
+    }
+    #result .link-list a:hover { text-decoration: underline; }
+    #result .link-hint {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 6px;
+    }
   </style>
 </head>
 <body>
@@ -126,13 +140,28 @@
         : 'https://jp.mercari.com/item/';
 
       ids.forEach(function(id) {
-        window.open(base + id, 'mercari_' + id);
+        var a = document.createElement('a');
+        a.href = base + id;
+        a.target = 'mercari_' + id;
+        a.rel = 'noopener';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       });
 
       document.getElementById('ids').value = '';
 
+      var modeName = currentMode === 'transaction' ? '거래화면' : '상품페이지';
+      var linkItems = ids.map(function(id) {
+        return '<a href="' + base + id + '" target="mercari_' + id + '" rel="noopener">' + id + '</a>';
+      }).join('');
+
       result.className = 'success';
-      result.textContent = ids.length + '개의 탭을 열었습니다 (' + (currentMode === 'transaction' ? '거래화면' : '상품페이지') + ')';
+      result.innerHTML =
+        ids.length + '개의 탭을 열었습니다 (' + modeName + ')' +
+        '<div class="link-hint">탭이 차단된 경우 아래 링크를 직접 클릭하세요</div>' +
+        '<div class="link-list">' + linkItems + '</div>';
     }
 
     // URL 파라미터로 ids 자동 입력
