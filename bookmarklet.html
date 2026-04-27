@@ -137,6 +137,7 @@
         if(!ids.length){alert('상품 ID를 찾을 수 없습니다.');return;}
         var url='${openerBase}?mode=${mode}&ids='+encodeURIComponent(ids.join(' '));
         window.open(url,'mercari_opener');
+        checked.forEach(function(cb){ cb.checked=false; });
       })();`;
       return 'javascript:' + code.replace(/\s+/g, ' ').trim();
     }
