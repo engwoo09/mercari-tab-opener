@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Mercari Opener</title>
+  <script>
+    (function () {
+      var target = 'https://engwoo09.github.io/mercari-work-total-dashboard/' + window.location.search;
+      window.location.replace(target);
+    })();
+  </script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -103,7 +109,8 @@
 <body>
   <div class="container">
     <h1>Mercari Opener</h1>
-    <p>상품 ID를 빈칸으로 구분하여 입력하면 새 탭으로 엽니다.</p>
+    <p>통합 대시보드로 이동합니다. 자동 이동되지 않으면 아래 링크를 클릭하세요.</p>
+    <p><a id="redirect-link" href="https://engwoo09.github.io/mercari-work-total-dashboard/">통합 대시보드 열기</a></p>
 
     <div class="mode-toggle">
       <button class="mode-btn active" id="btn-transaction" onclick="setMode('transaction')">거래화면</button>
@@ -167,6 +174,7 @@
     // URL 파라미터로 ids 자동 입력
     (function() {
       var params = new URLSearchParams(window.location.search);
+      document.getElementById('redirect-link').href = 'https://engwoo09.github.io/mercari-work-total-dashboard/' + window.location.search;
       var ids = params.get('ids');
       var mode = params.get('mode');
       if (mode === 'item' || mode === 'transaction') setMode(mode);

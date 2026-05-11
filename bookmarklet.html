@@ -115,7 +115,7 @@
   </div>
 
   <script>
-    var openerBase = 'https://engwoo09.github.io/mercari-tab-opener/';
+    var openerBase = 'https://engwoo09.github.io/mercari-work-total-dashboard/';
 
     function makeBookmarklet(mode) {
       var code = `(function(){
@@ -135,7 +135,7 @@
         }
         ids=[...new Set(ids)];
         if(!ids.length){alert('상품 ID를 찾을 수 없습니다.');return;}
-        var url='${openerBase}?mode=${mode}&ids='+encodeURIComponent(ids.join(' '));
+        var url='${openerBase}?view=opener&mode=${mode}&auto=1&ids='+encodeURIComponent(ids.join(' '));
         window.open(url,'mercari_opener');
         [].slice.call(document.querySelectorAll('input[type=checkbox]')).forEach(function(cb){ cb.checked=false; });
       })();`;
